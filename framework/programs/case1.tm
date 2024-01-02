@@ -2,13 +2,13 @@
 ; Output: c^nm
 
 ; the finite set of states
-#Q = {0,halt_acc,halt_rej,wait,i1,l2,l3,e4,g5,a6,l7,_8,i9,n10,p11,u12,t13,scan_a,scan_b}
+#Q = {0,halt_acc,halt_rej,wait,i1,l2,l3,e4,g5,a6,l7,_8,i9,n10,p11,u12,t13,scan_a,scan_b,chk_a,write_c,halt,left_b,right_b}
 
 ; the finite set of input symbols
 #S = {a,b}
 
 ; the complete set of tape symbols
-#G = {a,b,c}
+#G = {a,b,c,_,i,l,e,g,a,p,u,t,n}
 
 ; the start state
 #q0 = 0
@@ -17,14 +17,14 @@
 #B = _
 
 ; the set of final states
-#F = {halt_accept}
+#F = {halt_acc}
 
 ; the number of tapes
 #N = 3
 
 ; the transition functions
 
-0 a__ *__ *** scan_a
+0 a__ a__ *** scan_a
 0 b__ ___ r** wait
 0 ___ ___ *** wait
 scan_a a** _a_ rr* scan_a
@@ -34,7 +34,14 @@ scan_b b** __b r*r scan_b
 scan_b a** ___ r** wait
 scan_b _** ___ *** halt_acc
 
-
+halt_acc *** *** *l* chk_a
+chk_a *a* *a* *l* write_c
+chk_a *_* *_* *** halt
+write_c *** *** **l left_b
+left_b **b c*b r*l left_b
+left_b **_ **_ **r right_b
+right_b **b **b **r right_b
+right_b **_ **_ *** chk_a
 
 ; Reject Input
 wait a** ___ r** wait
