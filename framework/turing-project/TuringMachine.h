@@ -49,7 +49,7 @@ private:
     bool self_checked_state() { // return 1 : ok, 0 : wrong
         for(char x : Input_Chars) {
             if(!Tape_Chars.count(x)) {
-                std::cerr << "Error : " << x << "is in Input Chars but Not in Tape Chars.\n";
+                // std::cerr << "Error : " << x << "is in Input Chars but Not in Tape Chars.\n";
                 return 0;
             }
         }
@@ -58,8 +58,8 @@ private:
             for(int j = 0; j < State[i].trans.size(); ++j) {
                 for(int k = 0; k < N; ++k) {
                     if(State[i].trans[j].second.first.first[k] == '*' && State[i].trans[j].first[k] != '*') {
-                        std::cerr << "Error : The transition of State " << State[i].name << " : "
-                         << State[i].trans[j].first << "->" << State[i].trans[j].second.first.first << " is wrong\n";
+                        // std::cerr << "Error : The transition of State " << State[i].name << " : "
+                        //  << State[i].trans[j].first << "->" << State[i].trans[j].second.first.first << " is wrong\n";
                         return 0;
                     }
                 }
@@ -67,7 +67,7 @@ private:
             for(int j = 0; j < State[i].trans.size(); ++j)
                 for(int k = 0; k < State[i].trans.size(); ++k) if(j != k) {
                     if(match(State[i].trans[j].first, State[i].trans[k].first)) {
-                        std::cerr << "Error : The transition function confuse of State " << State[i].name << "\n";
+                        // std::cerr << "Error : The transition function confuse of State " << State[i].name << "\n";
                         return 0;
                     }
                 }
@@ -270,7 +270,9 @@ public:
             for(int i = 0; i < N; ++i) s += tapes[i].GetHdChar();
             int next = -1;
 
-            for(auto &[x, y] : State[now].trans) { // find next state
+            for(auto &pair : State[now].trans) { // find next state
+                auto &x = pair.first;
+                auto &y = pair.second;
                 if(match(s, x)) {
                     next = y.second;
                     s = get_trans(s, y.first.first);
