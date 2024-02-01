@@ -1,7 +1,7 @@
 #ifndef __TURING_MACHINE__
 #define __TURING_MACHINE__
 
-#include <bits/stdc++.h>
+#include<bits/stdc++.h>
 
 using namespace std;
 
@@ -34,7 +34,7 @@ private:
     bool match(std::string s, std::string t) { // if s matches t
         if(s.size() != t.size()) return 0;
         for(int i = 0; i < s.size(); ++i) {
-            if(s[i] != t[i] && t[i] != '*') return 0;
+            if(s[i] != t[i] && (t[i] != '*' || s[i] == '_')) return 0;
         }
         return 1;
     }
@@ -49,7 +49,7 @@ private:
     bool self_checked_state() { // return 1 : ok, 0 : wrong
         for(char x : Input_Chars) {
             if(!Tape_Chars.count(x)) {
-                // std::cerr << "Error : " << x << "is in Input Chars but Not in Tape Chars.\n";
+                std::cerr << "Error : " << x << "is in Input Chars but Not in Tape Chars.\n";
                 return 0;
             }
         }
@@ -58,8 +58,8 @@ private:
             for(int j = 0; j < State[i].trans.size(); ++j) {
                 for(int k = 0; k < N; ++k) {
                     if(State[i].trans[j].second.first.first[k] == '*' && State[i].trans[j].first[k] != '*') {
-                        // std::cerr << "Error : The transition of State " << State[i].name << " : "
-                        //  << State[i].trans[j].first << "->" << State[i].trans[j].second.first.first << " is wrong\n";
+                        std::cerr << "Error : The transition of State " << State[i].name << " : "
+                         << State[i].trans[j].first << "->" << State[i].trans[j].second.first.first << " is wrong\n";
                         return 0;
                     }
                 }
@@ -67,7 +67,7 @@ private:
             for(int j = 0; j < State[i].trans.size(); ++j)
                 for(int k = 0; k < State[i].trans.size(); ++k) if(j != k) {
                     if(match(State[i].trans[j].first, State[i].trans[k].first)) {
-                        // std::cerr << "Error : The transition function confuse of State " << State[i].name << "\n";
+                        std::cerr << "Error : The transition function confuse of State " << State[i].name << "\n";
                         return 0;
                     }
                 }
@@ -270,9 +270,7 @@ public:
             for(int i = 0; i < N; ++i) s += tapes[i].GetHdChar();
             int next = -1;
 
-            for(auto &pair : State[now].trans) { // find next state
-                auto &x = pair.first;
-                auto &y = pair.second;
+            for(auto &[x, y] : State[now].trans) { // find next state
                 if(match(s, x)) {
                     next = y.second;
                     s = get_trans(s, y.first.first);
@@ -361,6 +359,7 @@ public:
             }
             if(read_Q) break;
         }
+
         if(!read_Q) SYNTAX_ERROR;
         }
         // S
